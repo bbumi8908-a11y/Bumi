@@ -1,0 +1,373 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#087c50">
+<title>BumiChat</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#edf4ef;color:#172b22;font-family:Arial,sans-serif}
+button,input{font:inherit}
+button{cursor:pointer;border:0}
+header{background:#087c50;color:white;padding:17px;display:flex;justify-content:space-between;align-items:center}
+header h2{margin:0;font-size:22px}
+header small{opacity:.8}
+.container{max-width:650px;margin:auto;padding:15px}
+.card{background:white;padding:18px;border-radius:16px;margin-bottom:13px;box-shadow:0 3px 12px #00000009}
+h3{margin-top:0;color:#087c50}
+input{width:100%;padding:13px;margin:7px 0;border:1px solid #d5e2da;border-radius:10px;outline:none;background:#fbfdfb}
+input:focus{border-color:#087c50}
+.btn{background:#087c50;color:white;padding:13px;border-radius:10px;width:100%;margin:5px 0;font-weight:bold}
+.btn2{background:#e6f4eb;color:#087c50;padding:10px;border-radius:9px;margin:3px}
+.danger{background:#ffebeb;color:#bd3030;padding:10px;border-radius:9px;margin:3px}
+.muted{color:#82938a;font-size:12px}
+.hidden{display:none!important}
+.tabs{display:flex;gap:6px;overflow:auto;margin:12px 0}
+.tabs button{background:#e1eee5;color:#087c50;padding:11px;border-radius:9px;white-space:nowrap}
+.tabs button.active{background:#087c50;color:white}
+.stat{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.stat .card{margin:0}
+.num{font-size:25px;font-weight:bold;color:#087c50}
+.userrow{padding:12px 0;border-bottom:1px solid #edf1ed}
+.userrow:last-child{border:0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pill{font-size:11px;padding:5px 8px;border-radius:20px;background:#e5f5eb;color:#087c50}
+.pill.red{background:#ffebeb;color:#b52e2e}
+.chatbox{height:55vh;min-height:300px;overflow-y:auto;background:#e8f1e9;border-radius:13px;padding:12px}
+.msg{max-width:85%;padding:10px 13px;border-radius:13px;margin:8px 0;background:white;overflow-wrap:anywhere}
+.msg.mine{background:#c9f2d6;margin-left:auto}
+.msg small{display:block;color:#6b8273;font-size:10px;margin-top:5px}
+.chatinput{display:flex;gap:6px;margin-top:9px}
+.chatinput input{margin:0;flex:1;min-width:0}
+.chatinput button{background:#087c50;color:white;border-radius:10px;padding:0 18px}
+.avatar{width:42px;height:42px;background:#d9f1e1;color:#087c50;border-radius:50%;display:grid;place-items:center;font-weight:bold;flex-shrink:0}
+.profile{display:flex;align-items:center;gap:12px}
+footer{text-align:center;color:#94a49a;font-size:11px;padding:15px}
+</style>
+</head>
+<body>
+
+<header>
+ <div><h2>● BumiChat</h2><small>Connect with everyone</small></div>
+ <div id="headID" style="font-size:12px">V1.0</div>
+</header>
+
+<div class="container">
+
+<!-- BERANDA -->
+<section id="home">
+ <div class="card" style="text-align:center;padding:30px 18px">
+  <div style="font-size:55px">💬</div>
+  <h2>BumiChat</h2>
+  <p class="muted">Tempat ngobrol dan terhubung bersama teman.</p>
+  <button class="btn" onclick="page('register')">BUAT AKUN BARU</button>
+  <button class="btn2" style="width:100%" onclick="page('login')">LOGIN PENGGUNA</button>
+  <button class="btn2" style="width:100%;margin-top:15px" onclick="page('adminLogin')">⚙️ ADMIN DATABASE</button>
+ </div>
+ <div class="card">
+  <h3>Fitur BumiChat</h3>
+  <p>💬 Chat pribadi</p>
+  <p>🔎 Cari ID pengguna</p>
+  <p>👤 Profil akun</p>
+  <p>🛡️ Pengelolaan akun oleh admin</p>
+ </div>
+</section>
+
+<!-- DAFTAR -->
+<section id="register" class="hidden">
+ <div class="card">
+  <h3>Pendaftaran Pengguna</h3>
+  <input id="regName" placeholder="Nama pengguna">
+  <input id="regPass" type="password" placeholder="Buat password">
+  <button class="btn" onclick="register()">DAFTAR SEKARANG</button>
+  <button class="btn2" onclick="page('home')">Kembali</button>
+  <p class="muted">Akun baru harus disetujui admin sebelum bisa login.</p>
+ </div>
+</section>
+
+<!-- LOGIN -->
+<section id="login" class="hidden">
+ <div class="card">
+  <h3>Login BumiChat</h3>
+  <input id="loginID" placeholder="Masukkan ID pengguna">
+  <input id="loginPass" type="password" placeholder="Password">
+  <button class="btn" onclick="userLogin()">LOGIN</button>
+  <button class="btn2" onclick="page('home')">Kembali</button>
+ </div>
+</section>
+
+<!-- ADMIN LOGIN -->
+<section id="adminLogin" class="hidden">
+ <div class="card">
+  <h3>🔐 Administrator</h3>
+  <input id="adminName" placeholder="Username admin">
+  <input id="adminPass" type="password" placeholder="Password admin">
+  <button class="btn" onclick="adminLogin()">MASUK ADMIN</button>
+  <button class="btn2" onclick="page('home')">Kembali</button>
+  <p class="muted">Login demo awal: admin / admin123. Ganti sebelum pengujian.</p>
+ </div>
+</section>
+
+<!-- APLIKASI PENGGUNA -->
+<section id="app" class="hidden">
+ <div class="card">
+  <div class="profile">
+   <div class="avatar" id="myAvatar">B</div>
+   <div><b id="myName"></b><div class="muted" id="myID"></div></div>
+  </div>
+ </div>
+ <div class="tabs">
+  <button class="active" onclick="userTab('chats',this)">Chat</button>
+  <button onclick="userTab('search',this)">Cari ID</button>
+  <button onclick="userTab('profile',this)">Profil</button>
+ </div>
+
+ <div id="chats" class="card">
+  <h3>Percakapan</h3>
+  <div id="chatList"></div>
+ </div>
+
+ <div id="search" class="card hidden">
+  <h3>Cari teman</h3>
+  <input id="findID" placeholder="Masukkan ID, contoh BC123456" oninput="searchUser()">
+  <div id="searchResult"></div>
+ </div>
+
+ <div id="profile" class="card hidden">
+  <h3>Profil saya</h3>
+  <p>Nama: <b id="profileName"></b></p>
+  <p>ID: <b id="profileID"></b></p>
+  <p>Status: <span class="pill">Aktif</span></p>
+  <button class="btn danger" onclick="logout()">KELUAR AKUN</button>
+ </div>
+
+ <div id="chatRoom" class="card hidden">
+  <div class="row">
+   <div><h3 id="roomName">Chat</h3><p class="muted" id="roomID"></p></div>
+   <button class="btn2" onclick="closeRoom()">Kembali</button>
+  </div>
+  <div id="messages" class="chatbox"></div>
+  <div class="chatinput">
+   <input id="messageInput" placeholder="Tulis pesan..." onkeydown="if(event.key==='Enter')sendMessage()">
+   <button onclick="sendMessage()">➤</button>
+  </div>
+ </div>
+</section>
+
+<!-- ADMIN -->
+<section id="admin" class="hidden">
+ <div class="row">
+  <h3>⚙️ Admin Database</h3>
+  <button class="danger" onclick="logout()">Keluar</button>
+ </div>
+ <div class="stat">
+  <div class="card"><div class="num" id="sTotal">0</div><small>Total akun</small></div>
+  <div class="card"><div class="num" id="sPending">0</div><small>Pendaftaran baru</small></div>
+  <div class="card"><div class="num" id="sActive">0</div><small>Akun aktif</small></div>
+  <div class="card"><div class="num" id="sBlocked">0</div><small>Akun diblokir</small></div>
+ </div>
+ <div class="tabs">
+  <button class="active" onclick="adminTab('requests',this)">Pendaftaran</button>
+  <button onclick="adminTab('allUsers',this)">Pengguna</button>
+  <button onclick="adminTab('server',this)">Server</button>
+ </div>
+ <div id="requests" class="card"><h3>Pendaftaran baru</h3><div id="requestList"></div></div>
+ <div id="allUsers" class="card hidden"><h3>Database akun</h3>
+  <input id="adminSearch" placeholder="Cari nama atau ID..." oninput="renderAdmin()">
+  <div id="adminUserList"></div>
+ </div>
+ <div id="server" class="card hidden">
+  <h3>Server BumiChat</h3>
+  <p class="muted">Kode koneksi demo</p>
+  <div class="num" id="serverCode">BC-DEMO</div>
+  <button class="btn" onclick="makeCode()">GENERATE KODE</button>
+  <p class="muted">Kode ini belum menjadi koneksi server online.</p>
+  <hr style="border:0;border-top:1px solid #eee">
+  <h3>Informasi sistem</h3>
+  <p class="muted">Versi: BumiChat V1.0</p>
+  <p class="muted">Penyimpanan: LocalStorage perangkat ini</p>
+ </div>
+</section>
+</div>
+
+<footer>BumiChat V1.0 • Prototype</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const get=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
+let users=get("bc_users",[]);
+let messages=get("bc_messages",[]);
+let code=localStorage.getItem("bc_code")||"BC-DEMO";
+let me=null,friend=null;
+
+function save(){
+ localStorage.setItem("bc_users",JSON.stringify(users));
+ localStorage.setItem("bc_messages",JSON.stringify(messages));
+}
+function esc(s){
+ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function page(id){
+ ["home","register","login","adminLogin","app","admin"].forEach(x=>$(x).classList.add("hidden"));
+ $(id).classList.remove("hidden");
+}
+function register(){
+ let name=$("regName").value.trim(),pass=$("regPass").value;
+ if(name.length<2||pass.length<4)return alert("Nama minimal 2 karakter dan password minimal 4 karakter.");
+ if(users.some(u=>u.name.toLowerCase()===name.toLowerCase()))return alert("Nama sudah digunakan.");
+ let id="BC"+Math.floor(100000+Math.random()*900000);
+ while(users.some(u=>u.id===id))id="BC"+Math.floor(100000+Math.random()*900000);
+ users.push({id,name,pass,status:"pending"});
+ save();
+ alert("Pendaftaran berhasil!\nID kamu: "+id+"\nTunggu persetujuan admin.");
+ $("regName").value="";$("regPass").value="";
+ page("home");
+}
+function userLogin(){
+ let id=$("loginID").value.trim().toUpperCase(),pass=$("loginPass").value;
+ let u=users.find(x=>x.id===id);
+ if(!u)return alert("ID tidak ditemukan.");
+ if(u.status==="pending")return alert("Pendaftaran belum disetujui admin.");
+ if(u.status==="blocked")return alert("Akun kamu diblokir admin.");
+ if(u.pass!==pass)return alert("Password salah.");
+ me=u;openUser();
+}
+function adminLogin(){
+ if($("adminName").value==="admin"&&$("adminPass").value==="admin123"){
+ sessionStorage.setItem("bc_admin","yes");openAdmin();
+ }else alert("Username atau password admin salah.");
+}
+function openUser(){
+ page("app");
+ $("headID").textContent=me.id;
+ $("myName").textContent=me.name;
+ $("myID").textContent=me.id;
+ $("myAvatar").textContent=me.name[0].toUpperCase();
+ $("profileName").textContent=me.name;
+ $("profileID").textContent=me.id;
+ userTab("chats",document.querySelector("#app .tabs button"));
+ renderChats();
+}
+function logout(){
+ me=null;friend=null;sessionStorage.removeItem("bc_admin");
+ $("headID").textContent="V1.0";page("home");
+}
+function userTab(id,btn){
+ ["chats","search","profile","chatRoom"].forEach(x=>$(x).classList.add("hidden"));
+ $(id).classList.remove("hidden");
+ document.querySelectorAll("#app .tabs button").forEach(x=>x.classList.remove("active"));
+ if(btn)btn.classList.add("active");
+ if(id==="chats")renderChats();
+}
+function searchUser(){
+ let q=$("findID").value.trim().toUpperCase(),out=$("searchResult");
+ if(!q){out.innerHTML="";return;}
+ let found=users.filter(u=>u.id===q&&u.status==="active"&&u.id!==me.id);
+ out.innerHTML=found.length?found.map(u=>`
+ <div class="userrow row"><div><b>${esc(u.name)}</b><p class="muted">${esc(u.id)}</p></div>
+ <button class="btn2" onclick="openChat('${u.id}')">CHAT</button></div>`).join(""):"<p class='muted'>Pengguna tidak ditemukan atau tidak aktif.</p>";
+}
+function key(a,b){return [a,b].sort().join("_")}
+function renderChats(){
+ let ids=[...new Set(messages.filter(m=>m.from===me.id||m.to===me.id).map(m=>m.from===me.id?m.to:m.from))];
+ $("chatList").innerHTML=ids.length?ids.map(id=>{
+ let u=users.find(x=>x.id===id&&x.status==="active");
+ if(!u)return "";
+ let last=messages.filter(m=>key(m.from,m.to)===key(me.id,id)).at(-1);
+ return `<div class="userrow row"><div><b>${esc(u.name)}</b><p class="muted">${esc(last?.text||"Mulai percakapan")}</p></div><button class="btn2" onclick="openChat('${id}')">BUKA</button></div>`;
+ }).join(""):"<p class='muted'>Belum ada percakapan. Cari ID teman untuk memulai.</p>";
+}
+function openChat(id){
+ friend=users.find(x=>x.id===id&&x.status==="active");
+ if(!friend)return alert("Pengguna tidak tersedia.");
+ $("chats").classList.add("hidden");
+ $("search").classList.add("hidden");
+ $("profile").classList.add("hidden");
+ $("chatRoom").classList.remove("hidden");
+ $("roomName").textContent=friend.name;
+ $("roomID").textContent=friend.id;
+ renderMessages();
+}
+function closeRoom(){
+ friend=null;userTab("chats",document.querySelector("#app .tabs button"));
+}
+function renderMessages(){
+ if(!friend)return;
+ let list=messages.filter(m=>key(m.from,m.to)===key(me.id,friend.id));
+ $("messages").innerHTML=list.map(m=>`
+ <div class="msg ${m.from===me.id?"mine":""}">
+ ${esc(m.text)}<small>${m.from===me.id?"Kamu":esc(friend.name)} • ${esc(m.time)}</small>
+ </div>`).join("");
+ $("messages").scrollTop=$("messages").scrollHeight;
+}
+function sendMessage(){
+ if(!friend)return;
+ let text=$("messageInput").value.trim();
+ if(!text)return;
+ if(friend.status!=="active"||me.status!=="active")return alert("Akun tidak aktif.");
+ messages.push({from:me.id,to:friend.id,text,time:new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})});
+ $("messageInput").value="";
+ save();renderMessages();
+}
+// ADMIN
+function openAdmin(){
+ if(sessionStorage.getItem("bc_admin")!=="yes")return;
+ page("admin");$("headID").textContent="ADMIN";
+ $("serverCode").textContent=code;renderAdmin();
+}
+function adminTab(id,btn){
+ ["requests","allUsers","server"].forEach(x=>$(x).classList.add("hidden"));
+ $(id).classList.remove("hidden");
+ document.querySelectorAll("#admin .tabs button").forEach(x=>x.classList.remove("active"));
+ if(btn)btn.classList.add("active");
+ renderAdmin();
+}
+function renderAdmin(){
+ $("sTotal").textContent=users.length;
+ $("sPending").textContent=users.filter(u=>u.status==="pending").length;
+ $("sActive").textContent=users.filter(u=>u.status==="active").length;
+ $("sBlocked").textContent=users.filter(u=>u.status==="blocked").length;
+ $("serverCode").textContent=code;
+ $("requestList").innerHTML=users.filter(u=>u.status==="pending").map(u=>`
+ <div class="userrow"><b>${esc(u.name)}</b><p class="muted">${esc(u.id)}</p>
+ <button class="btn2" onclick="approve('${u.id}')">SETUJUI</button>
+ <button class="danger" onclick="reject('${u.id}')">TOLAK</button></div>
+ `).join("")||"<p class='muted'>Belum ada pendaftaran baru.</p>";
+ let q=($("adminSearch")?.value||"").toLowerCase();
+ $("adminUserList").innerHTML=users.filter(u=>(u.name+" "+u.id).toLowerCase().includes(q)).map(u=>`
+ <div class="userrow">
+ <div class="row"><b>${esc(u.name)}</b><span class="pill ${u.status==="blocked"?"red":""}">${esc(u.status)}</span></div>
+ <p class="muted">ID: ${esc(u.id)}</p>
+ ${u.status==="blocked"?`<button class="btn2" onclick="toggleBlock('${u.id}')">BUKA BLOKIR</button>`:`<button class="danger" onclick="toggleBlock('${u.id}')">BLOKIR AKUN</button>`}
+ <button class="danger" onclick="deleteUser('${u.id}')">HAPUS</button>
+ </div>`).join("")||"<p class='muted'>Database kosong.</p>";
+}
+function approve(id){
+ let u=users.find(x=>x.id===id);
+ if(u){u.status="active";save();renderAdmin();}
+}
+function reject(id){
+ if(confirm("Tolak dan hapus pendaftaran ini?")){
+ users=users.filter(x=>x.id!==id);save();renderAdmin();
+ }
+}
+function toggleBlock(id){
+ let u=users.find(x=>x.id===id);
+ if(u){u.status=u.status==="blocked"?"active":"blocked";save();renderAdmin();}
+}
+function deleteUser(id){
+ if(!confirm("Hapus akun ini beserta riwayat chatnya?"))return;
+ users=users.filter(x=>x.id!==id);
+ messages=messages.filter(m=>m.from!==id&&m.to!==id);
+ save();renderAdmin();
+}
+function makeCode(){
+ code="BC-"+Math.random().toString(36).slice(2,9).toUpperCase();
+ localStorage.setItem("bc_code",code);
+ $("serverCode").textContent=code;
+}
+</script>
+</body>
+</html>
